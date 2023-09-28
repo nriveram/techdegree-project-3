@@ -41,7 +41,7 @@ designsMenu.addEventListener('change', (e) => {
             currentThemeElement.setAttribute('selected', true); 
         } else {
             currentThemeElement.hidden = true; 
-            currentThemeElement.setAttribute('selected', false);
+            currentThemeElement.removeAttribute('selected');
         }
     } 
     /*
