@@ -76,7 +76,33 @@ activitiesFieldElement.addEventListener('change', (e) => {
  * The "Payment Info" section 
  */
 
+let paymentSelectElement = document.getElementById('payment'); 
+let creditCardElement = document.getElementById('credit-card'); 
+let paypalElement = document.getElementById('paypal');
+let bitcoinElement = document.getElementById('bitcoin'); 
 
+paypalElement.hidden = true; 
+bitcoinElement.hidden = true; 
+
+paymentSelectElement.children[1].setAttribute('selected', true); 
+
+paymentSelectElement.addEventListener('change', (e) => {
+    let currentPaymentSelection = e.target.value; 
+    if (currentPaymentSelection === 'paypal') {
+        paypalElement.hidden = false; 
+        bitcoinElement.hidden = true;
+        creditCardElement.hidden = true; 
+    } else if (currentPaymentSelection === 'bitcoin') {
+        paypalElement.hidden = true; 
+        bitcoinElement.hidden = false;
+        creditCardElement.hidden = true;
+    } else {
+        paypalElement.hidden = true; 
+        bitcoinElement.hidden = true;
+        creditCardElement.hidden = false;
+    }
+
+}); 
 
 
 
