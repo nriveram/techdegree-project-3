@@ -117,7 +117,10 @@ paymentSelectElement.addEventListener('change', (e) => {
 
 
 /**
- * The "Form Validation" sections - 
+ * The "Form Validation" sections - ensures that users aren't submitting a form 
+ * without the required information. It validates the name, email, card number, 
+ * ZIP, and CVV fields using regex. It also validates if at least one activity was
+ * checked. 
  */
  
 let emailInput = document.getElementById('email');
@@ -126,41 +129,45 @@ let zipInput = document.getElementById('zip');
 let cvvInput = document.getElementById('cvv'); 
 let formElement = document.querySelector('form'); 
 
+// validates user input using regex and .test()  
 let isValidName = () =>  /^[a-z]+$/i.test(nameInput.value); 
 let isValidEmail = () => /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailInput.value); 
 let isValidZip = () => /^\d{5}$/.test(zipInput.value); 
 let isValidCC = () => /^[^\s\-]+\d{13,16}$/.test(cardNumberInput.value); 
 let isValidCVV = () => /^\d{3}$/.test(cvvInput.value); 
+// helper function to validate if at least one activity was checked
 let isActivitiesChecked = () => 
 activitiesFieldElement.querySelectorAll("[type='checkbox']:checked").length > 0;
 let activitiesBox = document.querySelector('#activities-box'); 
 
 formElement.addEventListener('submit', (e) => {
-const validator = (inputElement, validationFunction) => {
-    if (validationFunction()) {
-      inputElement.parentNode.classList.add("valid"); 
-      inputElement.parentNode.classList.remove("not-valid");
-      //inputElement.nextElementSibling.style.display = 'none'; 
-      inputElement.parentNode.lastElementChild.style.display = 'none';
-    } else {
-      e.preventDefault();
-      inputElement.parentNode.classList.remove("valid"); 
-      inputElement.parentNode.classList.add("not-valid"); 
-      //inputElement.nextElementSibling.style.display = 'block'; 
-      inputElement.parentNode.lastElementChild.style.display = 'block';
-    }
-   };
-          
+    const validator = (inputElement, validationFunction) => {
+        if (validationFunction()) {
+            inputElement.parentNode.classList.add("valid"); 
+            inputElement.parentNode.classList.remove("not-valid");
+            //inputElement.nextElementSibling.style.display = 'none'; 
+            inputElement.parentNode.lastElementChild.style.display = 'none';
+        } else {
+            // display error messages if input was not valid 
+            e.preventDefault();
+            inputElement.parentNode.classList.remove("valid"); 
+            inputElement.parentNode.classList.add("not-valid"); 
+            //inputElement.nextElementSibling.style.display = 'block'; 
+            inputElement.parentNode.lastElementChild.style.display = 'block';
+        }
+    };
+    // validates the inputs using a helper function 
     validator(nameInput, isValidName);
     validator(emailInput, isValidEmail); 
     validator(activitiesBox, isActivitiesChecked);
+    // if the payment is a CC it will use more validations 
     if (paymentSelectElement.children[1].selected) {
         validator(zipInput, isValidZip);
         validator(cvvInput, isValidCVV); 
         validator(cardNumberInput, isValidCC); 
     } 
       
-  });
+});
 
 
 /**
