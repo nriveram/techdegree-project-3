@@ -1,18 +1,21 @@
 /**
- * The "Name" field 
+ * The "Name" field - by default the name input will focus when page loads. 
  */
-let nameInput = document.getElementById('name')
+
+let nameInput = document.getElementById('name');
 nameInput.focus(); 
 
 /**
- * The "Job Role" section
+ * The "Job Role" section - an 'other job' input field will display when the user
+ * selects 'other' in the job drop down menu. 
  */
 let jobRoleMenu = document.getElementById('title');
 let otherJobInput = document.getElementById('other-job-role');
-otherJobInput.hidden = true; 
+otherJobInput.hidden = true; // hides the job input field 
 
 jobRoleMenu.addEventListener('change', (e) => {
     let titleSelected = e.target.value; 
+    // checks if 'other' is selected to display the other job input field 
     if (titleSelected === 'other') {
         otherJobInput.hidden = false; 
     } else {
@@ -21,7 +24,8 @@ jobRoleMenu.addEventListener('change', (e) => {
 }); 
 
 /**
- * The "T-Shirt Info" section
+ * The "T-Shirt Info" section - enables the color menu when design/theme is
+ * selected. 
  */
 
 let designsMenu = document.getElementById('design'); 
@@ -32,24 +36,31 @@ colorsMenu.disabled = true;
 
 designsMenu.addEventListener('change', (e) => {
     colorsMenu.disabled = false;
+    colorsMenuChildren[0].removeAttribute('selected');
     for (let i = 1; i < colorsMenuChildren.length; i++) {
         let designSelected = e.target.value; 
         let currentThemeElement = colorsMenuChildren[i]; 
         let currentThemeName = currentThemeElement.getAttribute('data-theme'); 
-        
+        // checks if the color is available for the design selected 
         if (currentThemeName === designSelected) {
             currentThemeElement.hidden = false; 
-            currentThemeElement.setAttribute('selected', true); 
+            // sets the selected attribute to first color on the list 
+            if (i === 1 || i == 4) {
+                currentThemeElement.setAttribute('selected', true);
+            } 
         } else {
             currentThemeElement.hidden = true; 
-            currentThemeElement.removeAttribute('selected');
+            // removes the previous selected element 
+            if (i === 1 || i == 4) {
+                currentThemeElement.removeAttribute('selected');
+            } 
         }
     } 
 
 }); 
 
 /**
- * The "Activities" section 
+ * The "Activities" section - updates the total cost of activities selected  
  */
 
 let activitiesFieldElement = document.getElementById('activities'); 
@@ -59,28 +70,33 @@ let totalCost = 0;
 activitiesFieldElement.addEventListener('change', (e) => {
     let activitySelected = e.target; 
     let activitySelectedCost = +activitySelected.getAttribute('data-cost'); 
+    // if activity is checked, adds costs 
     if (activitySelected.checked) {
         totalCost += activitySelectedCost; 
     } else {
         totalCost -= activitySelectedCost;
     }
+    // updates new cost to the DOM 
     totalCostParagraphElement.innerHTML = `Total: $${totalCost}`; 
 }); 
 
 /**
- * The "Payment Info" section 
+ * The "Payment Info" section - sets the default payment to credit card. If user
+ * selects a different payment from drop down menu, it will display 
+ * its chosen payment method. 
  */
 
 let paymentSelectElement = document.getElementById('payment'); 
 let creditCardElement = document.getElementById('credit-card'); 
 let paypalElement = document.getElementById('paypal');
 let bitcoinElement = document.getElementById('bitcoin'); 
-
+// by default it hides the other two payments 
 paypalElement.hidden = true; 
 bitcoinElement.hidden = true; 
-
+// sets the default to credit card
 paymentSelectElement.children[1].setAttribute('selected', true); 
 
+// updates payment method according to user's selection and hides other payments
 paymentSelectElement.addEventListener('change', (e) => {
     let currentPaymentSelection = e.target.value; 
     if (currentPaymentSelection === 'paypal') {
@@ -101,7 +117,7 @@ paymentSelectElement.addEventListener('change', (e) => {
 
 
 /**
- * The "Form Validation" sections 
+ * The "Form Validation" sections - 
  */
  
 let emailInput = document.getElementById('email');
@@ -110,31 +126,42 @@ let zipInput = document.getElementById('zip');
 let cvvInput = document.getElementById('cvv'); 
 let formElement = document.querySelector('form'); 
 
-function isValid(field, regex) {
-    return regex.test(field); 
-}
+let isValidName = () =>  /^[a-z]+$/i.test(nameInput.value); 
+let isValidEmail = () => /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailInput.value); 
+let isValidZip = () => /^\d{5}$/.test(zipInput.value); 
+let isValidCC = () => /^[^\s\-]+\d{13,16}$/.test(cardNumberInput.value); 
+let isValidCVV = () => /^\d{3}$/.test(cvvInput.value); 
+let isActivitiesChecked = () => 
+activitiesFieldElement.querySelectorAll("[type='checkbox']:checked").length > 0;
+let activitiesBox = document.querySelector('#activities-box'); 
 
 formElement.addEventListener('submit', (e) => {
-    let nameTest = isValid(nameInput.value, /^[a-z]+$/i); 
-    let emailTest = isValid(emailInput.value, /^[^@]+@[^@.]+\.[a-z]+$/i);
-    let activitiesSelected = activitiesFieldElement.querySelectorAll("[type='checkbox']:checked"); 
-
-    
-    if (paymentSelectElement.children[1].selected) {
-        let zipTest = isValid(zipInput.value, /^\d{5}$/);
-        let ccTest = isValid(cardNumberInput.value, /^[^\s\-]+\d{13,16}$/);
-        let cvvTest = isValid(cvvInput.value, /^\d{3}$/);
-        if (!zipTest || !ccTest || !cvvTest) {
-            e.preventDefault();
-            console.log('cc error');
-        }
+const validator = (inputElement, validationFunction) => {
+    if (validationFunction()) {
+      inputElement.parentNode.classList.add("valid"); 
+      inputElement.parentNode.classList.remove("not-valid");
+      //inputElement.nextElementSibling.style.display = 'none'; 
+      inputElement.parentNode.lastElementChild.style.display = 'none';
+    } else {
+      e.preventDefault();
+      inputElement.parentNode.classList.remove("valid"); 
+      inputElement.parentNode.classList.add("not-valid"); 
+      //inputElement.nextElementSibling.style.display = 'block'; 
+      inputElement.parentNode.lastElementChild.style.display = 'block';
     }
-    if (activitiesSelected.length === 0 || !nameTest || !emailTest) {
-        e.preventDefault();
-        console.log('error'); 
+   };
+          
+    validator(nameInput, isValidName);
+    validator(emailInput, isValidEmail); 
+    validator(activitiesBox, isActivitiesChecked);
+    if (paymentSelectElement.children[1].selected) {
+        validator(zipInput, isValidZip);
+        validator(cvvInput, isValidCVV); 
+        validator(cardNumberInput, isValidCC); 
     } 
+      
+  });
 
-});
 
 /**
  * The "Accessibility" section 
