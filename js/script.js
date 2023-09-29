@@ -135,3 +135,19 @@ formElement.addEventListener('submit', (e) => {
     } 
 
 });
+
+/**
+ * The "Accessibility" section 
+ */
+
+let activitiesInputs = activitiesFieldElement.querySelectorAll('input'); 
+
+for (let i = 0; i < activitiesInputs.length; i++) {
+    let currentInput = activitiesInputs[i];
+    currentInput.addEventListener('focus', () => {
+        currentInput.parentNode.classList.add('focus'); 
+    }); 
+    currentInput.addEventListener('blur', () => {
+        currentInput.parentNode.classList.remove('focus');
+    });
+}
