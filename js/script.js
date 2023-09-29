@@ -29,11 +29,12 @@ let colorsMenu = document.getElementById('color');
 let colorsMenuChildren = colorsMenu.children; 
 colorsMenu.disabled = true; 
 
+
 designsMenu.addEventListener('change', (e) => {
     colorsMenu.disabled = false;
     for (let i = 1; i < colorsMenuChildren.length; i++) {
         let designSelected = e.target.value; 
-        let currentThemeElement = colorsMenuChildren[i]
+        let currentThemeElement = colorsMenuChildren[i]; 
         let currentThemeName = currentThemeElement.getAttribute('data-theme'); 
         
         if (currentThemeName === designSelected) {
@@ -44,13 +45,7 @@ designsMenu.addEventListener('change', (e) => {
             currentThemeElement.removeAttribute('selected');
         }
     } 
-    /*
-    if (colorsMenu.value !== '') {
-        colorsMenu.firstElementChild.selected = true; 
-    } else {
-        colorsMenu.firstElementChild.selected = false;
-    }
-    */
+
 }); 
 
 /**
@@ -105,5 +100,38 @@ paymentSelectElement.addEventListener('change', (e) => {
 }); 
 
 
-
+/**
+ * The "Form Validation" sections 
+ */
  
+let emailInput = document.getElementById('email');
+let cardNumberInput = document.getElementById('cc-num'); 
+let zipInput = document.getElementById('zip'); 
+let cvvInput = document.getElementById('cvv'); 
+let formElement = document.querySelector('form'); 
+
+function isValid(field, regex) {
+    return regex.test(field); 
+}
+
+formElement.addEventListener('submit', (e) => {
+    let nameTest = isValid(nameInput.value, /^[a-z]+$/i); 
+    let emailTest = isValid(emailInput.value, /^[^@]+@[^@.]+\.[a-z]+$/i);
+    let activitiesSelected = activitiesFieldElement.querySelectorAll("[type='checkbox']:checked"); 
+
+    
+    if (paymentSelectElement.children[1].selected) {
+        let zipTest = isValid(zipInput.value, /^\d{5}$/);
+        let ccTest = isValid(cardNumberInput.value, /^[^\s\-]+\d{13,16}$/);
+        let cvvTest = isValid(cvvInput.value, /^\d{3}$/);
+        if (!zipTest || !ccTest || !cvvTest) {
+            e.preventDefault();
+            console.log('cc error');
+        }
+    }
+    if (activitiesSelected.length === 0 || !nameTest || !emailTest) {
+        e.preventDefault();
+        console.log('error'); 
+    } 
+
+});
