@@ -115,7 +115,6 @@ paymentSelectElement.addEventListener('change', (e) => {
 
 }); 
 
-
 /**
  * The "Form Validation" sections - ensures that users aren't submitting a form 
  * without the required information. It validates the name, email, card number, 
@@ -169,9 +168,9 @@ formElement.addEventListener('submit', (e) => {
       
 });
 
-
 /**
- * The "Accessibility" section 
+ * The "Accessibility" section - adds a focus/blur state to the form to make
+ * it more accessible 
  */
 
 let activitiesInputs = activitiesFieldElement.querySelectorAll('input'); 
